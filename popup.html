@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Popup</title>
+    <style>
+        body {
+            width: 200px;
+            padding: 10px;
+        }
+        #gazeDot {
+            position: absolute;
+            width: 10px;
+            height: 10px;
+            background-color: red;
+            border-radius: 50%;
+            pointer-events: none;
+        }
+    </style>
+</head>
+<body>
+    <h1>Eye Tracker</h1>
+    <div class="controls">
+        <button id="startButton">Start Tracking</button>
+        <button id="stopButton">Stop</button>
+        <button id="calibrateButton">Calibrate</button>
+        <hr>
+        <div style="margin-top: 10px;">
+            <label><input type="checkbox" id="showVideoCheck" checked> Show Video Feedback</label><br>
+            <label><input type="checkbox" id="showPointsCheck" checked> Show Prediction Dot</label><br>
+            <label><input type="checkbox" id="applyFilterCheck" checked> Kalman Smoothing</label><br>
+            <label><input type="checkbox" id="gazeListenerCheck" checked> Continuous Gaze Tracking</label>
+        </div>
+        <hr>
+        <div style="margin-top: 10px;">
+            <button id="getPredictionButton">Get Current Prediction</button>
+            <div id="predictionDisplay" style="font-size: 10px; margin-top: 5px; color: #666;">Click to get gaze prediction</div>
+        </div>
+    </div>
+    <script src="webgazer.js"></script>
+    <script src="popup.js"></script>
+</body>
+</html>
