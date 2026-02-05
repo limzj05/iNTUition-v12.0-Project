@@ -7,8 +7,12 @@ document.addEventListener('DOMContentLoaded', function() {
     const showVideoCheck = document.getElementById('showVideoCheck');
     const showPointsCheck = document.getElementById('showPointsCheck');
     const gazeListenerCheck = document.getElementById('gazeListenerCheck');
+    const smoothingFilterCheck = document.getElementById('smoothingFilterCheck');
+    const faceTriggersCheck = document.getElementById('faceTriggersCheck');
+    const debugScreenCheck = document.getElementById('debugScreenCheck');
     const getPredictionButton = document.getElementById('getPredictionButton');
     const predictionDisplay = document.getElementById('predictionDisplay');
+    const triggerStatus = document.getElementById('triggerStatus');
     
     let isStarted = false;
     let isCalibrating = false;
@@ -185,6 +189,26 @@ document.addEventListener('DOMContentLoaded', function() {
 
     gazeListenerCheck.addEventListener('change', (e) => {
         sendMessageToActiveTab('toggleGazeListener', e.target.checked);
+    });
+
+    smoothingFilterCheck.addEventListener('change', (e) => {
+        sendMessageToActiveTab('toggleFilter', e.target.checked);
+        if (!e.target.checked) {
+            // Clear buffer when disabling filter
+            sendMessageToActiveTab('clearFilterBuffer', null);
+        }
+    });
+
+    faceTriggersCheck.addEventListener('change', (e) => {
+        sendMessageToActiveTab('toggleFaceTriggers', e.target.checked);
+        triggerStatus.textContent = e.target.checked ? 
+            'Watching for: Long Blink, Mouth Open, Nod, Head Shake' : 
+            'Face trigger detection disabled';
+        triggerStatus.style.color = e.target.checked ? '#666' : '#999';
+    });
+
+    debugScreenCheck.addEventListener('change', (e) => {
+        sendMessageToActiveTab('toggleDebugScreen', e.target.checked);
     });
 
     getPredictionButton.addEventListener('click', () => {

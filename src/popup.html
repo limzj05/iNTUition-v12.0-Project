@@ -28,12 +28,25 @@
             <label><input type="checkbox" id="showVideoCheck" checked> Show Video Feedback</label><br>
             <label><input type="checkbox" id="showPointsCheck" checked> Show Prediction Dot</label><br>
             <label><input type="checkbox" id="applyFilterCheck" checked> Kalman Smoothing</label><br>
-            <label><input type="checkbox" id="gazeListenerCheck" checked> Continuous Gaze Tracking</label>
+            <label><input type="checkbox" id="gazeListenerCheck" checked> Continuous Gaze Tracking</label><br>
+            <label><input type="checkbox" id="smoothingFilterCheck" checked> Weighted Average Smoothing</label>
         </div>
         <hr>
         <div style="margin-top: 10px;">
             <button id="getPredictionButton">Get Current Prediction</button>
             <div id="predictionDisplay" style="font-size: 10px; margin-top: 5px; color: #666;">Click to get gaze prediction</div>
+        </div>
+        <hr>
+        <div style="margin-top: 10px;">
+            <h4 style="margin: 5px 0; font-size: 12px;">🎯 Face Triggers</h4>
+            <label><input type="checkbox" id="faceTriggersCheck" checked> Enable Face Gesture Detection</label><br>
+            <div id="triggerStatus" style="font-size: 10px; margin-top: 5px; color: #666;">Watching for: Long Blink, Mouth Open, Nod, Head Shake</div>
+        </div>
+        <hr>
+        <div style="margin-top: 10px;">
+            <h4 style="margin: 5px 0; font-size: 12px;">🔍 Debug Tools</h4>
+            <label><input type="checkbox" id="debugScreenCheck"> Show Debug Screen</label><br>
+            <div style="font-size: 10px; margin-top: 5px; color: #666;">Display real-time gaze and gesture data</div>
         </div>
     </div>
     <script src="webgazer.js"></script>
