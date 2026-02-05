@@ -154,13 +154,13 @@ async function initializeScripts() {
         }
         
         console.log('Injecting WebGazer...');
-        await injectScript('webgazer.js');
+        await injectScript('src/webgazer.js');
         console.log('WebGazer injected, waiting for it to load...');
         
         // Also inject face landmarker before page script
         console.log('Injecting Face Landmarker...');
         try {
-            await injectScript('face_landmarker.js');
+            await injectScript('src/face_landmarker.js');
             console.log('Face Landmarker injected successfully');
             
             // Wait a moment for the script to execute and set up globals
@@ -190,7 +190,7 @@ async function initializeScripts() {
         }
         
         console.log('Injecting page script...');
-        await injectScript('page_script.js');
+        await injectScript('src/page_script.js');
         console.log('All scripts injected successfully');
     } catch (error) {
         console.error('Failed to inject scripts:', error);
