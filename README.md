@@ -84,6 +84,219 @@ The extension injects WebGazer.js into webpages and uses:
 - **Script Injection**: Handled by `content.js`
 - **Permissions**: Configured in `manifest.json`
 
+## 👨‍💻 Developer Integration
+
+### WebGazer Data Stream API
+
+The extension provides a **global data stream object** that developers can use to access real-time eye tracking and gesture data from any webpage where the extension is active.
+
+#### Accessing the Data Stream
+
+```javascript
+// The global object is available at:
+window.WebGazerDataStream
+
+// Current data structure:
+{
+    currentGaze: { x: number, y: number },    // Real-time gaze coordinates
+    lastGesture: string,                      // Most recent gesture: "longBlink", "mouthOpen", "nod", "shakeHead", ""
+    lastUpdate: number,                       // Timestamp of last update (Date.now())
+    isTracking: boolean                       // Whether WebGazer is actively tracking
+}
+```
+
+#### Real-time Event Listening
+
+```javascript
+// Listen for gaze coordinate updates (fires ~30-60 times per second)
+window.addEventListener('webgazer-gaze-update', (event) => {
+    const { x, y, timestamp } = event.detail;
+    console.log(`User looking at: (${x}, ${y}) at ${timestamp}`);
+    
+    // Your code here - highlight elements, trigger animations, etc.
+    highlightElementAtPosition(x, y);
+});
+
+// Listen for gesture detection
+window.addEventListener('webgazer-gesture-detected', (event) => {
+    const { gesture, timestamp } = event.detail;
+    console.log(`Gesture detected: ${gesture} at ${timestamp}`);
+    
+    // Handle different gestures
+    switch(gesture) {
+        case 'longBlink':
+            // User did a long blink - trigger action
+            performLongBlinkAction();
+            break;
+        case 'mouthOpen':
+            // User opened mouth - maybe pause/play video
+            toggleVideoPlayback();
+            break;
+        case 'nod':
+            // User nodded - confirm action
+            confirmCurrentSelection();
+            break;
+        case 'shakeHead':
+            // User shook head - cancel action
+            cancelCurrentAction();
+            break;
+    }
+});
+```
+
+#### Polling-based Access
+
+```javascript
+// For applications that prefer polling over events
+function checkGazeData() {
+    const dataStream = window.WebGazerDataStream;
+    
+    if (!dataStream.isTracking) {
+        console.log('Eye tracking not active');
+        return;
+    }
+    
+    const { x, y } = dataStream.currentGaze;
+    const timeSinceUpdate = Date.now() - dataStream.lastUpdate;
+    
+    if (timeSinceUpdate < 100) { // Data is fresh (within 100ms)
+        // Use the gaze coordinates
+        updateUIBasedOnGaze(x, y);
+    }
+    
+    if (dataStream.lastGesture) {
+        console.log(`Recent gesture: ${dataStream.lastGesture}`);
+        // Handle gesture...
+        
+        // Clear gesture after handling (optional)
+        // Note: gesture will be overwritten by next detected gesture
+    }
+}
+
+// Poll every 50ms
+setInterval(checkGazeData, 50);
+```
+
+#### Practical Use Cases
+
+**1. Interactive Web Applications**
+```javascript
+// Highlight elements based on gaze
+window.addEventListener('webgazer-gaze-update', (event) => {
+    const { x, y } = event.detail;
+    const element = document.elementFromPoint(x, y);
+    
+    // Remove previous highlights
+    document.querySelectorAll('.gaze-highlight').forEach(el => {
+        el.classList.remove('gaze-highlight');
+    });
+    
+    // Highlight current element
+    if (element) {
+        element.classList.add('gaze-highlight');
+    }
+});
+```
+
+**2. Gesture-controlled Navigation**
+```javascript
+window.addEventListener('webgazer-gesture-detected', (event) => {
+    const { gesture } = event.detail;
+    
+    switch(gesture) {
+        case 'longBlink':
+            // Click the currently gazed-at element
+            const { x, y } = window.WebGazerDataStream.currentGaze;
+            const target = document.elementFromPoint(x, y);
+            if (target && target.click) {
+                target.click();
+            }
+            break;
+            
+        case 'nod':
+            // Scroll down
+            window.scrollBy(0, 300);
+            break;
+            
+        case 'shakeHead':
+            // Go back in history
+            window.history.back();
+            break;
+    }
+});
+```
+
+**3. Accessibility Features**
+```javascript
+// Voice-activated gaze clicking for accessibility
+let gazeClickMode = false;
+
+// Toggle gaze click mode with voice command or other input
+function toggleGazeClickMode() {
+    gazeClickMode = !gazeClickMode;
+    console.log('Gaze click mode:', gazeClickMode ? 'ON' : 'OFF');
+}
+
+window.addEventListener('webgazer-gesture-detected', (event) => {
+    if (!gazeClickMode) return;
+    
+    if (event.detail.gesture === 'longBlink') {
+        // Perform click at current gaze position
+        const { x, y } = window.WebGazerDataStream.currentGaze;
+        const element = document.elementFromPoint(x, y);
+        
+        if (element) {
+            // Visual feedback
+            element.style.outline = '3px solid #ff0000';
+            setTimeout(() => element.style.outline = '', 200);
+            
+            // Trigger click
+            element.click();
+        }
+    }
+});
+```
+
+#### Error Handling
+
+```javascript
+// Check if extension is available
+function checkWebGazerAvailability() {
+    if (typeof window.WebGazerDataStream === 'undefined') {
+        console.warn('WebGazer Data Stream not available. Extension may not be installed or active.');
+        return false;
+    }
+    
+    if (!window.WebGazerDataStream.isTracking) {
+        console.info('WebGazer is installed but not currently tracking.');
+        return false;
+    }
+    
+    return true;
+}
+
+// Use with error handling
+function safeGazeAction() {
+    if (!checkWebGazerAvailability()) {
+        // Fallback behavior
+        useMouseBasedInteraction();
+        return;
+    }
+    
+    // Use gaze data
+    const { x, y } = window.WebGazerDataStream.currentGaze;
+    // ... your code
+}
+```
+
+### Integration Best Practices
+
+1. **Always check availability** before using the data stream
+2. **Handle missing data gracefully** - provide mouse/keyboard fallbacks  
+3. **Respect user privacy** - don't store or transmit gaze data without consent
+4. **Optimize performance** - avoid heavy processing in gaze update handlers
+5. **Test thoroughly** - eye tracking accuracy varies between users and setups
+
 ## Troubleshooting
 
 ### Common Issues

@@ -19,7 +19,7 @@
   ],
   "web_accessible_resources": [
     {
-      "resources": ["webgazer.js", "page_script.js"],
+      "resources": ["webgazer.js", "page_script.js", "face_landmarker.js", "node_modules/@mediapipe/tasks-vision/wasm/*"],
       "matches": ["<all_urls>"]
     }
   ],
