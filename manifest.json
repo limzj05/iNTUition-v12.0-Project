@@ -1,25 +1,43 @@
 {
   "manifest_version": 3,
-  "name": "My Chrome Extension",
+  "name": "OmniSight",
   "version": "1.0",
-  "description": "A basic Chrome extension skeleton",
+  "description": "Adaptive AI-powered eye tracking for hands-free navigation.",
   "action": {
-    "default_popup": "popup.html",
-    "default_title": "Open the popup"
+    "default_popup": "src/popup.html",
+    "default_title": "Open OmniSight"
   },
-  "permissions": ["storage", "activeTab", "scripting"],
+  "permissions": [
+    "storage", 
+    "activeTab", 
+    "scripting"
+  ],
+  "host_permissions": [
+    "<all_urls>"
+  ],
   "background": {
-    "service_worker": "background.js"
+    "service_worker": "src/background.js"
   },
   "content_scripts": [
     {
       "matches": ["<all_urls>"],
-      "js": ["content.js"]
+      "js": [
+        "src/webgazer.js",
+        "src/content.js"
+      ],
+      "css": ["src/style.css"],
+      "run_at": "document_start",
+      "all_frames": false
     }
   ],
   "web_accessible_resources": [
     {
-      "resources": ["webgazer.js", "page_script.js", "face_landmarker.js", "node_modules/@mediapipe/tasks-vision/wasm/*"],
+      "resources": [
+        "src/webgazer.js",
+        "src/page_script.js",
+        "src/face_landmarker.js",
+        "node_modules/@mediapipe/tasks-vision/wasm/*"
+      ],
       "matches": ["<all_urls>"]
     }
   ],
@@ -27,5 +45,8 @@
     "16": "icons/icon16.png",
     "48": "icons/icon48.png",
     "128": "icons/icon128.png"
+  },
+  "content_security_policy": {
+    "extension_pages": "script-src 'self' 'wasm-unsafe-eval'; object-src 'self'"
   }
 }

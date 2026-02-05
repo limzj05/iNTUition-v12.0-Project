@@ -1,0 +1,67 @@
+/* --- Gaze Indicator --- */
+/* This creates the dot that follows your eyes on the screen */
+#webgazerVideoContainer {
+    display: none !important; /* Hide the raw webcam feed on the page if not needed */
+}
+
+.gaze-dot {
+    position: fixed;
+    width: 20px;
+    height: 20px;
+    background-color: rgba(255, 0, 0, 0.5); /* Red with transparency */
+    border: 2px solid white;
+    border-radius: 50%;
+    pointer-events: none; /* Crucial: ensures the dot doesn't block mouse clicks */
+    z-index: 999999; /* Ensure it's on top of everything on YouTube */
+    transition: transform 0.1s ease-out; /* Smooths out some of the jitter */
+}
+
+/* --- AI Suggestion Tooltip --- */
+/* This is the box that will show the AI-generated search term */
+.omnisight-suggestion {
+    position: fixed;
+    background: #1a1a1a;
+    color: #ffffff;
+    padding: 8px 12px;
+    border-radius: 8px;
+    font-family: 'Roboto', Arial, sans-serif;
+    font-size: 14px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.5);
+    border: 1px solid #3ea6ff; /* YouTube-blue accent */
+    z-index: 999998;
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.omnisight-suggestion.active {
+    opacity: 1;
+}
+
+/* --- Calibration Overlay --- */
+/* Used by Person 4 to help train the eye tracker */
+.calibration-point {
+    position: fixed;
+    width: 15px;
+    height: 15px;
+    background-color: #3ea6ff;
+    border-radius: 50%;
+    cursor: pointer;
+    z-index: 1000000;
+}
+
+/* --- Visual Feedback for "Dwell" --- */
+/* Animates when the user is hovering long enough to trigger an action */
+@keyframes dwell-progress {
+    from { transform: scale(1); opacity: 0.5; }
+    to { transform: scale(2); opacity: 0; }
+}
+
+.gaze-dot.dwelling::after {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0; bottom: 0;
+    border-radius: 50%;
+    border: 2px solid #3ea6ff;
+    animation: dwell-progress 1s infinite;
+}
